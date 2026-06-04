@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CB4 — Problem Tree & Impact Layering | AFL 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --mar:#7A1F2E;--mar-dk:#5A1520;--mar-lt:#F4DADD;
+  --yel:#F5C518;--yel-lt:#FFF9E0;--yel-dim:rgba(245,197,24,.7);
+  --bg:#F2EFE9;--white:#fff;
+  --text:#1A1A1A;--text-sec:#5C5955;--text-ter:#9E9B96;
+  --border:rgba(0,0,0,0.10);--border-em:rgba(0,0,0,0.20);
+  --surf:#F7F5F1;--surf2:#EEECE8;
+  --r-sm:6px;--r-md:8px;--r-lg:12px;--r-xl:16px;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:0;line-height:1.6}
+
+/* ── SITE NAV ───────────────────────────────────── */
+.site-nav{background:var(--mar);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 1px 0 rgba(0,0,0,.15)}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:28px;height:28px;background:var(--yel);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.nav-logo-inner{width:16px;height:16px;background:var(--mar);border-radius:50%}
+.nav-title{color:var(--yel);font-size:13px;font-weight:600;letter-spacing:.02em}
+.nav-sub{color:rgba(245,197,24,.6);font-size:11px}
+.nav-links{display:flex;gap:4px}
+.nav-link{color:rgba(245,197,24,.7);font-size:12px;padding:5px 10px;border-radius:99px;cursor:pointer;background:transparent;border:none;font-family:inherit;transition:all .15s}
+.nav-link:hover,.nav-link.active{background:rgba(245,197,24,.15);color:var(--yel)}
+@media(max-width:600px){.nav-links{display:none}}
+
+/* ── PAGE WRAPPER ───────────────────────────────── */
+.page{max-width:900px;margin:0 auto;padding:28px 20px 60px}
+
+/* ── CASE STUDY SECTION ─────────────────────────── */
+.case-section{margin-bottom:32px}
+.section-eyebrow{font-size:11px;font-weight:500;letter-spacing:.09em;text-transform:uppercase;color:var(--text-ter);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.section-eyebrow::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.case-card{background:var(--white);border-radius:var(--r-xl);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.case-card-hdr{background:var(--mar);padding:16px 20px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.case-card-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--yel);line-height:1.3}
+.case-card-sub{font-size:11px;color:var(--yel-dim);margin-top:3px}
+.case-badge{background:rgba(245,197,24,.18);border:1px solid rgba(245,197,24,.3);border-radius:99px;padding:3px 10px;font-size:11px;color:var(--yel);white-space:nowrap;align-self:flex-start;margin-top:2px}
+
+.case-body{padding:20px}
+.case-narrative{font-size:13.5px;color:var(--text-sec);line-height:1.75;margin-bottom:18px;padding:14px 16px;background:var(--yel-lt);border-left:3px solid var(--yel);border-radius:0 var(--r-md) var(--r-md) 0}
+.case-narrative strong{color:var(--mar);font-weight:600}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat-card{background:var(--surf);border-radius:var(--r-md);padding:12px 14px;border:1px solid var(--border);text-align:center}
+.stat-value{font-size:22px;font-weight:600;line-height:1.1;margin-bottom:3px}
+.stat-label{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text-ter)}
+.stat-sub{font-size:10px;color:var(--text-ter);margin-top:2px}
+.stat-red .stat-value{color:#D85A30}
+.stat-mar .stat-value{color:var(--mar)}
+.stat-yel .stat-value{color:#B07D10}
+.stat-green .stat-value{color:#3B6D11}
+
+.gap-callout{margin-top:14px;background:var(--mar-lt);border:1px solid rgba(122,31,46,.2);border-radius:var(--r-md);padding:10px 14px;font-size:12px;color:var(--mar);display:flex;align-items:flex-start;gap:8px}
+.gap-callout-icon{font-size:16px;flex-shrink:0;margin-top:-1px}
+
+/* ── FRAME TABS ──────────────────────────────────── */
+.frames-section{}
+.tab-bar{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tab{font-size:12px;font-weight:500;padding:7px 16px;border-radius:99px;border:1px solid var(--border-em);background:var(--white);cursor:pointer;color:var(--text-sec);transition:all .12s;font-family:inherit;box-shadow:var(--shadow)}
+.tab:hover{background:var(--surf);border-color:var(--border-em)}
+.tab.active{background:var(--mar);color:var(--yel);border-color:var(--mar);box-shadow:none}
+.frame{display:none}
+.frame.active{display:block}
+
+/* ── FRAME CARD ──────────────────────────────────── */
+.frame-card{background:var(--white);border-radius:var(--r-xl);border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+.frame-hdr{background:var(--mar);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.hdr-title{font-size:13px;font-weight:600;color:var(--yel);letter-spacing:.01em}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.hdr-pill{font-size:11px;padding:3px 10px;border-radius:99px;background:rgba(245,197,24,.15);color:var(--yel);border:1px solid rgba(245,197,24,.25)}
+.frame-body{padding:18px}
+
+/* ── FORM ELEMENTS ───────────────────────────────── */
+.hint{font-size:12px;color:var(--text-ter);font-style:italic;padding:3px 0 10px;line-height:1.6}
+.field-label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-ter);margin-bottom:4px}
+.field-input{width:100%;font-size:13px;padding:8px 11px;border:1px solid var(--border-em);border-radius:var(--r-md);background:var(--surf);color:var(--text);resize:none;font-family:inherit;line-height:1.5;transition:border-color .15s,background .15s}
+.field-input:focus{outline:none;border-color:var(--mar);background:var(--white);box-shadow:0 0 0 3px rgba(122,31,46,.07)}
+.field-input::placeholder{color:var(--text-ter);font-style:italic}
+.locked{background:var(--surf2)!important;color:var(--text-ter)!important;cursor:not-allowed;pointer-events:none}
+.divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:620px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ── PROBLEM TREE ────────────────────────────────── */
+.tree-level-label{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-ter);margin:14px 0 8px;display:flex;align-items:center;gap:6px}
+.tree-level-label span{background:var(--surf2);padding:2px 8px;border-radius:99px}
+.arrows-down{display:flex;justify-content:space-around;padding:6px 20px;opacity:.3;font-size:18px;color:var(--text-sec);letter-spacing:60px}
+
+.core-node{background:var(--mar);border-radius:var(--r-lg);padding:12px 20px;text-align:center;max-width:340px;margin:0 auto;box-shadow:0 2px 8px rgba(122,31,46,.25)}
+.core-node textarea{background:transparent;border:none;color:var(--yel);text-align:center;font-size:14px;font-weight:600;width:100%;resize:none;font-family:inherit;outline:none;line-height:1.5}
+.core-node textarea::placeholder{color:rgba(245,197,24,.45);font-style:italic;font-weight:400}
+
+.prob-node{border-radius:var(--r-md);padding:10px 12px;border:1px solid}
+.prob-a{background:#FAECE7;border-color:#D85A30}
+.prob-b{background:#E6F1FB;border-color:#2E6FAD}
+.prob-c{background:#EEEDFE;border-color:#534AB7}
+.prob-tag{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:4px}
+.tag-a{color:#993C1D}.tag-b{color:#0C447C}.tag-c{color:#3C3489}
+.prob-node textarea{background:transparent;border:none;font-size:12px;font-weight:500;width:100%;resize:none;font-family:inherit;outline:none;min-height:38px;line-height:1.5}
+.prob-a textarea{color:#712B13}.prob-b textarea{color:#0C447C}.prob-c textarea{color:#26215C}
+.prob-a textarea::placeholder,.prob-b textarea::placeholder,.prob-c textarea::placeholder{font-style:italic;opacity:.45}
+
+.sticky-note{border-radius:var(--r-md);padding:8px 10px;border:1px solid;margin-bottom:6px}
+.sticky-a{background:#FFF5F2;border-color:#F0997B}
+.sticky-b{background:#EEF5FD;border-color:#85B7EB}
+.sticky-c{background:#F4F3FE;border-color:#AFA9EC}
+.sticky-note textarea{background:transparent;border:none;font-size:12px;width:100%;resize:none;font-family:inherit;outline:none;min-height:52px;color:var(--text);line-height:1.5}
+.sticky-note textarea::placeholder{color:var(--text-ter);font-style:italic}
+.add-btn{font-size:11px;color:var(--text-ter);border:1px dashed var(--border-em);border-radius:var(--r-md);padding:6px 10px;background:transparent;cursor:pointer;width:100%;text-align:center;font-family:inherit;transition:all .12s}
+.add-btn:hover{background:var(--surf);color:var(--text-sec)}
+
+.sol-node{border-radius:var(--r-md);padding:10px 12px;background:var(--white);border:2px solid}
+.sol-a{border-color:#D85A30}.sol-b{border-color:#2E6FAD}.sol-c{border-color:#534AB7}
+.sol-type{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
+.sol-radio{font-size:11px;cursor:pointer;color:var(--text-sec);display:flex;align-items:center;gap:4px}
+.sol-radio input{accent-color:var(--mar);cursor:pointer}
+
+/* ── IMPACT LAYERING ─────────────────────────────── */
+.layer-item{border-radius:var(--r-md);padding:14px 16px;margin-bottom:4px;border:1px solid}
+.layer-1{background:#FFF3E0;border-color:#D85A30}
+.layer-2{background:#E6F1FB;border-color:#2E6FAD}
+.layer-3{background:#EAF3DE;border-color:#639922}
+.layer-4{background:#EEEDFE;border-color:#534AB7}
+.layer-badge{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:8px}
+.lb-1{background:#D85A30;color:#fff}
+.lb-2{background:#2E6FAD;color:#fff}
+.lb-3{background:#639922;color:#fff}
+.lb-4{background:#534AB7;color:#fff}
+.layer-arrow{text-align:center;font-size:22px;color:var(--text-ter);margin:6px 0;line-height:1}
+
+.scope-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:500px){.scope-grid{grid-template-columns:1fr}}
+.scope-box{border-radius:var(--r-md);padding:12px 14px}
+.scope-yes{background:#EAF3DE;border:1px solid #639922}
+.scope-no{background:var(--surf);border:1px solid var(--border-em)}
+.scope-title{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px}
+.scope-yes .scope-title{color:#2C5208}
+.scope-no .scope-title{color:var(--text-sec)}
+
+/* ── PROGRESS BAR ────────────────────────────────── */
+.progress-wrap{margin-bottom:14px}
+.progress-track{height:4px;background:var(--surf2);border-radius:99px;overflow:hidden;margin-bottom:5px}
+.progress-fill{height:100%;background:var(--mar);border-radius:99px;transition:width .4s ease}
+.progress-label{font-size:11px;color:var(--text-ter);display:flex;justify-content:space-between}
+
+/* ── FOOTER ──────────────────────────────────────── */
+.site-footer{text-align:center;font-size:11px;color:var(--text-ter);padding:20px;border-top:1px solid var(--border);margin-top:40px}
+
+/* ── RESPONSIVE ──────────────────────────────────── */
+@media(max-width:480px){
+  .page{padding:16px 14px 40px}
+  .case-body{padding:14px}
+  .frame-body{padding:14px}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="site-nav">
+  <div class="nav-brand">
+    <div class="nav-logo"><div class="nav-logo-inner"></div></div>
+    <div>
+      <div class="nav-title">AFL · CB4</div>
+      <div class="nav-sub">Problem Tree &amp; Impact Layering</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="scrollTo(0,0)">Case Study</button>
+    <button class="nav-link" onclick="document.getElementById('frames').scrollIntoView({behavior:'smooth'})">Frames</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════════
+       CASE STUDY
+  ═══════════════════════════════════════════════ -->
+  <div class="case-section">
+    <div class="section-eyebrow">Case Study — Read before filling in</div>
+
+    <div class="case-card">
+      <div class="case-card-hdr">
+        <div>
+          <div class="case-card-title">SMAN Nusantara Raya</div>
+          <div class="case-card-sub">CB4 Reference Case · Fictional school, realistic data</div>
+        </div>
+        <div class="case-badge">CB4 Studi Kasus</div>
+      </div>
+
+      <div class="case-body">
+        <div class="case-narrative">
+          SMAN Nusantara Raya is a public high school in a mid-sized Indonesian city with <strong>420 Grade 12 students</strong> in 2025. Of those, <strong>87 students were declared eligible</strong> for SNBP (the national school achievement pathway to public universities). However, the school's guidance counsellor (Guru BK) has never maintained structured alumni data — no record of who got into which university, with what grades. All students chose their university and study programme based on intuition, parental advice, or social media trends. The school has never systematically tracked this history. As a result, <strong>only 19 out of 87 eligible students passed SNBP (21.8%)</strong> — just below the national average of ~22% for academic state universities. Worse, the Grade 11 cohort becoming eligible next year has no idea where to begin.
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card stat-mar">
+            <div class="stat-value">420</div>
+            <div class="stat-label">Grade 12 students</div>
+            <div class="stat-sub">Total cohort 2025</div>
+          </div>
+          <div class="stat-card stat-yel">
+            <div class="stat-value">87</div>
+            <div class="stat-label">Eligible for SNBP</div>
+            <div class="stat-sub">20.7% of cohort</div>
+          </div>
+          <div class="stat-card stat-red">
+            <div class="stat-value">19</div>
+            <div class="stat-label">Passed SNBP</div>
+            <div class="stat-sub">21.8% of eligible</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" style="color:#888">~22%</div>
+            <div class="stat-label">National average</div>
+            <div class="stat-sub">Academic state universities</div>
+          </div>
+          <div class="stat-card stat-red">
+            <div class="stat-value">–0.2 pt</div>
+            <div class="stat-label">Gap vs national</div>
+            <div class="stat-sub">Below average</div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Alumni data records</div>
+            <div class="stat-sub">No structured history</div>
+          </div>
+        </div>
+
+        <div class="gap-callout">
+          <span class="gap-callout-icon">⚑</span>
+          <span><strong>Core gap:</strong> The school has no data infrastructure to support SNBP decisions — no alumni tracking, no benchmark tool, no counsellor-led study programme rationalisation. Every decision is intuition-driven, creating a cycle of suboptimal choices year after year.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       FRAMES
+  ═══════════════════════════════════════════════ -->
+  <div id="frames" class="frames-section">
+    <div class="section-eyebrow">Your Group's Work — Fill in all 3 frames</div>
+
+    <!-- PROGRESS -->
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="progress-label">
+        <span id="prog-text">0 of 3 frames started</span>
+        <span id="prog-pct">0%</span>
+      </div>
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab active" onclick="switchTab(0,this)">Frame 1 — School Context</button>
+      <button class="tab" onclick="switchTab(1,this)">Frame 2 — Problem Tree</button>
+      <button class="tab" onclick="switchTab(2,this)">Frame 3 — Impact Layering</button>
+    </div>
+
+    <!-- ── FRAME 1 ──────────────────────────────────── -->
+    <div class="frame active" id="f0">
+      <div class="frame-card">
+        <div class="frame-hdr">
+          <div class="hdr-title">Frame 1 — School Profile &amp; Problem Statement</div>
+          <div class="hdr-right"><div class="hdr-pill">~10 min</div></div>
+        </div>
+        <div class="frame-body">
+          <div class="hint">Fill in your group's school data. Use real numbers where available. Reference the case study above as an example.</div>
+
+          <div class="grid2" style="margin-bottom:14px">
+            <div>
+              <div class="field-label">School Name</div>
+              <input class="field-input" type="text" placeholder="e.g. SMAN 5 Kota X" oninput="updateProgress()">
+            </div>
+            <div>
+              <div class="field-label">City / District</div>
+              <input class="field-input" type="text" placeholder="e.g. Bandung, West Java" oninput="updateProgress()">
+            </div>
+            <div>
+              <div class="field-label">Group / Team Name</div>
+              <input class="field-input" type="text" placeholder="e.g. Group 3 — Batch 12" oninput="updateProgress()">
+            </div>
+            <div>
+              <div class="field-label">Team Members</div>
+              <input class="field-input" type="text" placeholder="Separate names with commas" oninput="updateProgress()">
+            </div>
+          </div>
+
+          <hr class="divider">
+          <div class="field-label" style="margin-bottom:10px">SNBP School Data</div>
+          <div class="grid3" style="margin-bottom:16px">
+            <div>
+              <div class="field-label">Total Grade 12 Students</div>
+              <input class="field-input" type="number" placeholder="e.g. 420" oninput="updateProgress()">
+            </div>
+            <div>
+              <div class="field-label">Eligible for SNBP</div>
+              <input class="field-input" type="number" placeholder="e.g. 87" oninput="updateProgress()">
+            </div>
+            <div>
+              <div class="field-label">Students Who Passed SNBP</div>
+              <input class="field-input" type="number" placeholder="e.g. 19" oninput="updateProgress()">
+            </div>
+            <div>
+              <div class="field-label">Pass Rate (%)</div>
+              <input class="field-input" type="text" placeholder="passed ÷ eligible × 100" oninput="updateProgress()">
+            </div>
+            <div>
+              <div class="field-label">National Average (reference)</div>
+              <input class="field-input locked" type="text" value="~22% (academic state universities, 2025)" readonly>
+            </div>
+            <div>
+              <div class="field-label">Gap vs National Average</div>
+              <input class="field-input" type="text" placeholder="+ or – how many points?" oninput="updateProgress()">
+            </div>
+          </div>
+
+          <hr class="divider">
+          <div>
+            <div class="field-label">Core Problem Statement</div>
+            <div class="hint">Write 2–3 sentences. Include specific numbers. Avoid vague or generic language.</div>
+            <textarea class="field-input" rows="4" placeholder="e.g. Of 87 eligible students at [school], only 19 passed SNBP 2025 (21.8%). The school's guidance counsellor has no structured alumni data to advise students on university and programme choices. As a result, all decisions rely on intuition rather than historical evidence." oninput="updateProgress()"></textarea>
+          </div>
+
+          <div style="margin-top:16px;text-align:right">
+            <button class="tab" style="background:var(--mar);color:var(--yel);border-color:var(--mar)" onclick="switchTab(1,document.querySelectorAll('.tab')[1])">Next: Problem Tree →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FRAME 2 ──────────────────────────────────── -->
+    <div class="frame" id="f1">
+      <div class="frame-card">
+        <div class="frame-hdr">
+          <div class="hdr-title">Frame 2 — Problem Tree</div>
+          <div class="hdr-right"><div class="hdr-pill">~25 min</div></div>
+        </div>
+        <div class="frame-body">
+          <div class="hint">Map from core problem → 3 problem nodes → root causes per node → solution per node.</div>
+
+          <!-- L0 -->
+          <div class="tree-level-label"><span>Level 0 — Core Problem</span></div>
+          <div class="core-node">
+            <textarea rows="2" placeholder="Write the central problem...&#10;e.g. Low SNBP pass rate at [school name]" oninput="autoGrow(this);updateProgress()"></textarea>
+          </div>
+
+          <div class="arrows-down">↓ ↓ ↓</div>
+
+          <!-- L1 -->
+          <div class="tree-level-label"><span>Level 1 — Problem Nodes (3 main cause clusters)</span></div>
+          <div class="grid3">
+            <div>
+              <div class="prob-node prob-a">
+                <div class="prob-tag tag-a">Problem A</div>
+                <textarea placeholder="Short title...&#10;e.g. No student eligibility mapping" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+            </div>
+            <div>
+              <div class="prob-node prob-b">
+                <div class="prob-tag tag-b">Problem B</div>
+                <textarea placeholder="Short title...&#10;e.g. Weak admin & technical process" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+            </div>
+            <div>
+              <div class="prob-node prob-c">
+                <div class="prob-tag tag-c">Problem C</div>
+                <textarea placeholder="Short title...&#10;e.g. Irrational study programme choices" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="arrows-down">↓ ↓ ↓</div>
+
+          <!-- L2 -->
+          <div class="tree-level-label"><span>Level 2 — Root Causes (minimum 3 per problem)</span></div>
+          <div class="grid3" id="rc-grid">
+            <div id="col-a">
+              <div class="sticky-note sticky-a"><textarea placeholder="Root cause A1...&#10;Underlying reason for Problem A?" oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-a"><textarea placeholder="Root cause A2..." oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-a"><textarea placeholder="Root cause A3..." oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <button class="add-btn" onclick="addSticky('col-a','sticky-a')">+ Add root cause A</button>
+            </div>
+            <div id="col-b">
+              <div class="sticky-note sticky-b"><textarea placeholder="Root cause B1...&#10;Underlying reason for Problem B?" oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-b"><textarea placeholder="Root cause B2..." oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-b"><textarea placeholder="Root cause B3..." oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <button class="add-btn" onclick="addSticky('col-b','sticky-b')">+ Add root cause B</button>
+            </div>
+            <div id="col-c">
+              <div class="sticky-note sticky-c"><textarea placeholder="Root cause C1...&#10;Underlying reason for Problem C?" oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-c"><textarea placeholder="Root cause C2..." oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-c"><textarea placeholder="Root cause C3..." oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <button class="add-btn" onclick="addSticky('col-c','sticky-c')">+ Add root cause C</button>
+            </div>
+          </div>
+
+          <div class="arrows-down">↓ ↓ ↓</div>
+
+          <!-- L3 -->
+          <div class="tree-level-label"><span>Level 3 — Solution per Problem</span></div>
+          <div class="grid3">
+            <div>
+              <div class="sol-node sol-a">
+                <div class="prob-tag tag-a">Solution → Problem A</div>
+                <textarea class="field-input" rows="2" style="background:transparent" placeholder="Solution name...&#10;e.g. SNBP MIS tracking dashboard" oninput="autoGrow(this);updateProgress()"></textarea>
+                <div class="sol-type">
+                  <label class="sol-radio"><input type="radio" name="sol-a" value="primary" onchange="updateProgress()"> Primary / Direct</label>
+                  <label class="sol-radio"><input type="radio" name="sol-a" value="indirect" onchange="updateProgress()"> Indirect</label>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="sol-node sol-b">
+                <div class="prob-tag tag-b">Solution → Problem B</div>
+                <textarea class="field-input" rows="2" style="background:transparent" placeholder="Solution name..." oninput="autoGrow(this);updateProgress()"></textarea>
+                <div class="sol-type">
+                  <label class="sol-radio"><input type="radio" name="sol-b" value="primary" onchange="updateProgress()"> Primary / Direct</label>
+                  <label class="sol-radio"><input type="radio" name="sol-b" value="indirect" onchange="updateProgress()"> Indirect</label>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="sol-node sol-c">
+                <div class="prob-tag tag-c">Solution → Problem C</div>
+                <textarea class="field-input" rows="2" style="background:transparent" placeholder="Solution name..." oninput="autoGrow(this);updateProgress()"></textarea>
+                <div class="sol-type">
+                  <label class="sol-radio"><input type="radio" name="sol-c" value="primary" onchange="updateProgress()"> Primary / Direct</label>
+                  <label class="sol-radio"><input type="radio" name="sol-c" value="indirect" onchange="updateProgress()"> Indirect</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;justify-content:space-between">
+            <button class="tab" onclick="switchTab(0,document.querySelectorAll('.tab')[0])">← Back</button>
+            <button class="tab" style="background:var(--mar);color:var(--yel);border-color:var(--mar)" onclick="switchTab(2,document.querySelectorAll('.tab')[2])">Next: Impact Layering →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── FRAME 3 ──────────────────────────────────── -->
+    <div class="frame" id="f2">
+      <div class="frame-card">
+        <div class="frame-hdr">
+          <div class="hdr-title">Frame 3 — Impact Layering (4-Layer Chain)</div>
+          <div class="hdr-right"><div class="hdr-pill">~15 min</div></div>
+        </div>
+        <div class="frame-body">
+          <div class="hint">Choose 1 solution from your Problem Tree (usually Primary). Map its impact layer by layer.</div>
+
+          <div style="margin-bottom:16px">
+            <div class="field-label">Solution being mapped here</div>
+            <input class="field-input" type="text" placeholder="Copy the Primary solution name from Frame 2..." oninput="updateProgress()">
+          </div>
+          <hr class="divider">
+
+          <div class="layer-item layer-1">
+            <span class="layer-badge lb-1">Layer 1 — Direct Output</span>
+            <div class="hint">What does your solution directly produce? (product, data, system, feature, document)</div>
+            <div class="grid2">
+              <div>
+                <div class="field-label">Output description</div>
+                <textarea class="field-input" rows="2" placeholder="e.g. Guidance counsellor has a benchmark dashboard of alumni grades per university & programme" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+              <div>
+                <div class="field-label">Metric / concrete number</div>
+                <textarea class="field-input" rows="2" placeholder="e.g. From 0 records → 36+ alumni data points available" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="layer-arrow">↓</div>
+
+          <div class="layer-item layer-2">
+            <span class="layer-badge lb-2">Layer 2 — Behaviour Change</span>
+            <div class="hint">Whose behaviour changes because of your output? Guidance counsellor? Students? School admin?</div>
+            <div class="grid2">
+              <div>
+                <div class="field-label">Who changes &amp; how</div>
+                <textarea class="field-input" rows="2" placeholder="e.g. Guidance counsellor shifts from passive to data-driven, proactive programme advising" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+              <div>
+                <div class="field-label">Estimated number of people</div>
+                <textarea class="field-input" rows="2" placeholder="e.g. 20–30% of 87 eligible students receive targeted guidance" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="layer-arrow">↓</div>
+
+          <div class="layer-item layer-3">
+            <span class="layer-badge lb-3">Layer 3 — Outcome</span>
+            <div class="hint">What measurable change happens as a result of the behaviour change?</div>
+            <div class="grid2">
+              <div>
+                <div class="field-label">From → To</div>
+                <textarea class="field-input" rows="2" placeholder="e.g. Pass rate rises from 21.8% → estimated 28% (+6 students/year)" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+              <div>
+                <div class="field-label">Estimated timeframe</div>
+                <input class="field-input" type="text" placeholder="e.g. 1 SNBP cycle (~6 months implementation)" oninput="updateProgress()">
+              </div>
+            </div>
+          </div>
+
+          <div class="layer-arrow">↓</div>
+
+          <div class="layer-item layer-4">
+            <span class="layer-badge lb-4">Layer 4 — SDG / Long-term Impact</span>
+            <div class="hint">Connect your outcome to the most relevant Sustainable Development Goal(s).</div>
+            <div class="grid2">
+              <div>
+                <div class="field-label">Relevant SDG(s)</div>
+                <input class="field-input" type="text" placeholder="e.g. SDG 4 — Quality Education" oninput="updateProgress()">
+              </div>
+              <div>
+                <div class="field-label">Explain the connection</div>
+                <textarea class="field-input" rows="2" placeholder="e.g. Every student who passes SNBP gains access to a state university without entrance fees → long-term family economic impact" oninput="autoGrow(this);updateProgress()"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <hr class="divider">
+          <div class="field-label" style="margin-bottom:10px">Solution Scope &amp; Assumptions</div>
+          <div class="scope-grid">
+            <div class="scope-box scope-yes">
+              <div class="scope-title">✓ What your solution CAN address</div>
+              <textarea class="field-input" rows="4" style="background:transparent;border-color:#97C459" placeholder="1. ...&#10;2. ...&#10;3. ..." oninput="autoGrow(this);updateProgress()"></textarea>
+            </div>
+            <div class="scope-box scope-no">
+              <div class="scope-title">✗ What your solution CANNOT address</div>
+              <textarea class="field-input" rows="4" placeholder="1. ...&#10;2. ...&#10;3. Be honest about your solution's limits!" oninput="autoGrow(this);updateProgress()"></textarea>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;display:flex;justify-content:space-between;align-items:center">
+            <button class="tab" onclick="switchTab(1,document.querySelectorAll('.tab')[1])">← Back</button>
+            <div id="complete-msg" style="font-size:12px;color:#3B6D11;font-weight:500;display:none">✓ All frames complete — ready to present!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /frames -->
+</div><!-- /page -->
+
+<footer class="site-footer">
+  CB4 — Problem Tree &amp; Impact Layering · AFL 2025 · Reference case: SMAN Nusantara Raya (fictional, realistic data)
+</footer>
+
+<script>
+function switchTab(idx, btn) {
+  document.querySelectorAll('.frame').forEach((f,i) => f.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('frames').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function addSticky(colId, cls) {
+  const col = document.getElementById(colId);
+  const btn = col.querySelector('.add-btn');
+  const div = document.createElement('div');
+  div.className = 'sticky-note ' + cls;
+  const ta = document.createElement('textarea');
+  const count = col.querySelectorAll('textarea').length + 1;
+  const letter = colId.replace('col-','').toUpperCase();
+  ta.placeholder = 'Root cause ' + letter + count + '...';
+  ta.addEventListener('input', function(){autoGrow(this);updateProgress();});
+  div.appendChild(ta);
+  col.insertBefore(div, btn);
+  ta.focus();
+}
+
+function autoGrow(el) {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
+document.querySelectorAll('textarea').forEach(ta => {
+  ta.addEventListener('input', function(){autoGrow(this);});
+});
+
+function countFilled() {
+  const inputs = document.querySelectorAll('.field-input:not(.locked), textarea.field-input');
+  const textareas = document.querySelectorAll('.prob-node textarea, .core-node textarea, .sticky-note textarea');
+  let filled = 0, total = 0;
+  [...inputs, ...textareas].forEach(el => {
+    if(el.closest('.locked')) return;
+    total++;
+    if(el.value && el.value.trim()) filled++;
+  });
+  return {filled, total};
+}
+
+function updateProgress() {
+  const frames = [document.getElementById('f0'), document.getElementById('f1'), document.getElementById('f2')];
+  let framesStarted = 0;
+  frames.forEach(f => {
+    const filled = Array.from(f.querySelectorAll('input:not(.locked),textarea')).some(el => el.value && el.value.trim());
+    if(filled) framesStarted++;
+  });
+  const pct = Math.round((framesStarted / 3) * 100);
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-text').textContent = framesStarted + ' of 3 frames started';
+  const completeMsg = document.getElementById('complete-msg');
+  if(framesStarted === 3) {
+    completeMsg.style.display = 'block';
+  } else {
+    completeMsg.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
