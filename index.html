@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CB4 — Problem Tree & Impact Layering | AFL 2025</title>
+<title>CB4: Problem Tree & Impact Layering | AFL 2025</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -280,15 +280,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="grid2" style="margin-bottom:14px">
             <div>
               <div class="field-label">School Name</div>
-              <input class="field-input" type="text" placeholder="e.g. SMAN 5 Kota X" oninput="updateProgress()">
+              <input class="field-input" type="text" placeholder="e.g. SMA Harapan Bangsa" oninput="updateProgress()">
             </div>
             <div>
               <div class="field-label">City / District</div>
-              <input class="field-input" type="text" placeholder="e.g. Bandung, West Java" oninput="updateProgress()">
+              <input class="field-input" type="text" placeholder="e.g. Surabaya, East Java" oninput="updateProgress()">
             </div>
             <div>
               <div class="field-label">Group / Team Name</div>
-              <input class="field-input" type="text" placeholder="e.g. Group 3 — Batch 12" oninput="updateProgress()">
+              <input class="field-input" type="text" placeholder="e.g. Group 5 — Batch 10" oninput="updateProgress()">
             </div>
             <div>
               <div class="field-label">Team Members</div>
@@ -301,19 +301,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="grid3" style="margin-bottom:16px">
             <div>
               <div class="field-label">Total Grade 12 Students</div>
-              <input class="field-input" type="number" placeholder="e.g. 420" oninput="updateProgress()">
+              <input class="field-input" type="number" placeholder="e.g. 380" oninput="updateProgress()">
             </div>
             <div>
               <div class="field-label">Eligible for SNBP</div>
-              <input class="field-input" type="number" placeholder="e.g. 87" oninput="updateProgress()">
+              <input class="field-input" type="number" placeholder="e.g. 72" oninput="updateProgress()">
             </div>
             <div>
               <div class="field-label">Students Who Passed SNBP</div>
-              <input class="field-input" type="number" placeholder="e.g. 19" oninput="updateProgress()">
+              <input class="field-input" type="number" placeholder="e.g. 21" oninput="updateProgress()">
             </div>
             <div>
               <div class="field-label">Pass Rate (%)</div>
-              <input class="field-input" type="text" placeholder="passed ÷ eligible × 100" oninput="updateProgress()">
+              <input class="field-input" type="text" placeholder="calculate: passed ÷ eligible × 100" oninput="updateProgress()">
             </div>
             <div>
               <div class="field-label">National Average (reference)</div>
@@ -321,7 +321,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             </div>
             <div>
               <div class="field-label">Gap vs National Average</div>
-              <input class="field-input" type="text" placeholder="+ or – how many points?" oninput="updateProgress()">
+              <input class="field-input" type="text" placeholder="e.g. +3.2 points above average" oninput="updateProgress()">
             </div>
           </div>
 
@@ -329,7 +329,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div>
             <div class="field-label">Core Problem Statement</div>
             <div class="hint">Write 2–3 sentences. Include specific numbers. Avoid vague or generic language.</div>
-            <textarea class="field-input" rows="4" placeholder="e.g. Of 87 eligible students at [school], only 19 passed SNBP 2025 (21.8%). The school's guidance counsellor has no structured alumni data to advise students on university and programme choices. As a result, all decisions rely on intuition rather than historical evidence." oninput="updateProgress()"></textarea>
+            <textarea class="field-input" rows="4" placeholder="e.g. At SMA Harapan Bangsa, the student dropout rate in vocational tracks reached 14% in 2024 — nearly double the city average of 7.5%. Most dropouts occur in Grade 11, yet the school has no early intervention programme to identify and support at-risk students before they disengage entirely." oninput="updateProgress()"></textarea>
           </div>
 
           <div style="margin-top:16px;text-align:right">
@@ -352,7 +352,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <!-- L0 -->
           <div class="tree-level-label"><span>Level 0 — Core Problem</span></div>
           <div class="core-node">
-            <textarea rows="2" placeholder="Write the central problem...&#10;e.g. Low SNBP pass rate at [school name]" oninput="autoGrow(this);updateProgress()"></textarea>
+            <textarea rows="2" placeholder="Write one central problem...&#10;e.g. High dropout rate in vocational schools in [district]" oninput="autoGrow(this);updateProgress()"></textarea>
           </div>
 
           <div class="arrows-down">↓ ↓ ↓</div>
@@ -363,19 +363,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div>
               <div class="prob-node prob-a">
                 <div class="prob-tag tag-a">Problem A</div>
-                <textarea placeholder="Short title...&#10;e.g. No student eligibility mapping" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea placeholder="Short title...&#10;e.g. Lack of early warning system for at-risk students" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
             </div>
             <div>
               <div class="prob-node prob-b">
                 <div class="prob-tag tag-b">Problem B</div>
-                <textarea placeholder="Short title...&#10;e.g. Weak admin & technical process" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea placeholder="Short title...&#10;e.g. Insufficient teacher capacity in practical subjects" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
             </div>
             <div>
               <div class="prob-node prob-c">
                 <div class="prob-tag tag-c">Problem C</div>
-                <textarea placeholder="Short title...&#10;e.g. Irrational study programme choices" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea placeholder="Short title...&#10;e.g. Low parental engagement in school activities" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
             </div>
           </div>
@@ -386,19 +386,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
           <div class="tree-level-label"><span>Level 2 — Root Causes (minimum 3 per problem)</span></div>
           <div class="grid3" id="rc-grid">
             <div id="col-a">
-              <div class="sticky-note sticky-a"><textarea placeholder="Root cause A1...&#10;Underlying reason for Problem A?" oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-a"><textarea placeholder="Root cause A1 — what is the deeper 'why' behind Problem A?" oninput="autoGrow(this);updateProgress()"></textarea></div>
               <div class="sticky-note sticky-a"><textarea placeholder="Root cause A2..." oninput="autoGrow(this);updateProgress()"></textarea></div>
               <div class="sticky-note sticky-a"><textarea placeholder="Root cause A3..." oninput="autoGrow(this);updateProgress()"></textarea></div>
               <button class="add-btn" onclick="addSticky('col-a','sticky-a')">+ Add root cause A</button>
             </div>
             <div id="col-b">
-              <div class="sticky-note sticky-b"><textarea placeholder="Root cause B1...&#10;Underlying reason for Problem B?" oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-b"><textarea placeholder="Root cause B1 — what is the deeper 'why' behind Problem B?" oninput="autoGrow(this);updateProgress()"></textarea></div>
               <div class="sticky-note sticky-b"><textarea placeholder="Root cause B2..." oninput="autoGrow(this);updateProgress()"></textarea></div>
               <div class="sticky-note sticky-b"><textarea placeholder="Root cause B3..." oninput="autoGrow(this);updateProgress()"></textarea></div>
               <button class="add-btn" onclick="addSticky('col-b','sticky-b')">+ Add root cause B</button>
             </div>
             <div id="col-c">
-              <div class="sticky-note sticky-c"><textarea placeholder="Root cause C1...&#10;Underlying reason for Problem C?" oninput="autoGrow(this);updateProgress()"></textarea></div>
+              <div class="sticky-note sticky-c"><textarea placeholder="Root cause C1 — what is the deeper 'why' behind Problem C?" oninput="autoGrow(this);updateProgress()"></textarea></div>
               <div class="sticky-note sticky-c"><textarea placeholder="Root cause C2..." oninput="autoGrow(this);updateProgress()"></textarea></div>
               <div class="sticky-note sticky-c"><textarea placeholder="Root cause C3..." oninput="autoGrow(this);updateProgress()"></textarea></div>
               <button class="add-btn" onclick="addSticky('col-c','sticky-c')">+ Add root cause C</button>
@@ -413,7 +413,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div>
               <div class="sol-node sol-a">
                 <div class="prob-tag tag-a">Solution → Problem A</div>
-                <textarea class="field-input" rows="2" style="background:transparent" placeholder="Solution name...&#10;e.g. SNBP MIS tracking dashboard" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea class="field-input" rows="2" style="background:transparent" placeholder="Solution name...&#10;e.g. Bi-weekly student progress monitoring system" oninput="autoGrow(this);updateProgress()"></textarea>
                 <div class="sol-type">
                   <label class="sol-radio"><input type="radio" name="sol-a" value="primary" onchange="updateProgress()"> Primary / Direct</label>
                   <label class="sol-radio"><input type="radio" name="sol-a" value="indirect" onchange="updateProgress()"> Indirect</label>
@@ -462,7 +462,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
           <div style="margin-bottom:16px">
             <div class="field-label">Solution being mapped here</div>
-            <input class="field-input" type="text" placeholder="Copy the Primary solution name from Frame 2..." oninput="updateProgress()">
+            <input class="field-input" type="text" placeholder="Write the name of your Primary solution from Frame 2 here..." oninput="updateProgress()">
           </div>
           <hr class="divider">
 
@@ -472,11 +472,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div class="grid2">
               <div>
                 <div class="field-label">Output description</div>
-                <textarea class="field-input" rows="2" placeholder="e.g. Guidance counsellor has a benchmark dashboard of alumni grades per university & programme" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea class="field-input" rows="2" placeholder="e.g. Teachers receive a weekly at-risk student report with attendance and grade trends" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
               <div>
                 <div class="field-label">Metric / concrete number</div>
-                <textarea class="field-input" rows="2" placeholder="e.g. From 0 records → 36+ alumni data points available" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea class="field-input" rows="2" placeholder="e.g. From manual tracking → automated weekly report covering 100% of enrolled students" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
             </div>
           </div>
@@ -489,11 +489,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div class="grid2">
               <div>
                 <div class="field-label">Who changes &amp; how</div>
-                <textarea class="field-input" rows="2" placeholder="e.g. Guidance counsellor shifts from passive to data-driven, proactive programme advising" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea class="field-input" rows="2" placeholder="e.g. Homeroom teachers shift from reactive to proactive — following up with at-risk students weekly" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
               <div>
                 <div class="field-label">Estimated number of people</div>
-                <textarea class="field-input" rows="2" placeholder="e.g. 20–30% of 87 eligible students receive targeted guidance" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea class="field-input" rows="2" placeholder="e.g. An estimated 15–20% of students (those flagged as at-risk) receive direct intervention" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
             </div>
           </div>
@@ -506,11 +506,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div class="grid2">
               <div>
                 <div class="field-label">From → To</div>
-                <textarea class="field-input" rows="2" placeholder="e.g. Pass rate rises from 21.8% → estimated 28% (+6 students/year)" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea class="field-input" rows="2" placeholder="e.g. Dropout rate falls from 12% → estimated 7% over 1 academic year" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
               <div>
                 <div class="field-label">Estimated timeframe</div>
-                <input class="field-input" type="text" placeholder="e.g. 1 SNBP cycle (~6 months implementation)" oninput="updateProgress()">
+                <input class="field-input" type="text" placeholder="e.g. 1 academic year from full system rollout" oninput="updateProgress()">
               </div>
             </div>
           </div>
@@ -523,11 +523,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
             <div class="grid2">
               <div>
                 <div class="field-label">Relevant SDG(s)</div>
-                <input class="field-input" type="text" placeholder="e.g. SDG 4 — Quality Education" oninput="updateProgress()">
+                <input class="field-input" type="text" placeholder="e.g. SDG 4 — Quality Education, SDG 8 — Decent Work &amp; Economic Growth" oninput="updateProgress()">
               </div>
               <div>
                 <div class="field-label">Explain the connection</div>
-                <textarea class="field-input" rows="2" placeholder="e.g. Every student who passes SNBP gains access to a state university without entrance fees → long-term family economic impact" oninput="autoGrow(this);updateProgress()"></textarea>
+                <textarea class="field-input" rows="2" placeholder="e.g. Reducing dropout rates keeps students in the education pipeline longer, improving employability and breaking intergenerational poverty cycles" oninput="autoGrow(this);updateProgress()"></textarea>
               </div>
             </div>
           </div>
